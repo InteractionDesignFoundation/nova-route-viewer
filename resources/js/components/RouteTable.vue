@@ -44,6 +44,9 @@
                     {{ route.action }}
                 </td>
                 <td class="whitespace-no-wrap text-left">
+                    {{ route.hits }}
+                </td>
+                <td class="whitespace-no-wrap text-left">
                     <span v-for="value in route.middleware"
                           class="px-2 py-1 text-xs font-semibold rounded mr-2"
                           :class="style(value)"
@@ -102,6 +105,10 @@ export default {
                 {
                     label: 'Methods',
                     attribute: 'methods',
+                },
+                {
+                    label: 'Hits',
+                    attribute: 'hits',
                 },
                 {
                     label: 'Action',
