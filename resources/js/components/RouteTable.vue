@@ -41,10 +41,10 @@
                     </span>
                 </td>
                 <td class="whitespace-no-wrap text-left">
-                    {{ route.action }}
+                    {{ route.hits }}
                 </td>
                 <td class="whitespace-no-wrap text-left">
-                    {{ route.hits }}
+                    {{ route.action }}
                 </td>
                 <td class="whitespace-no-wrap text-left">
                     <span v-for="value in route.middleware"
