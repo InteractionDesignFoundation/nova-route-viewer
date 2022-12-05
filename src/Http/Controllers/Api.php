@@ -29,6 +29,7 @@ class Api
                 'uri' => $route->uri,
                 'as' => $routeName,
                 'methods' => $route->methods,
+                'hits' => \App\Http\Middleware\CountRouteHits::hits($route),
                 'action' => $route->action['uses'] ?? '',
                 'middleware' => $routeMiddleware,
             ];
