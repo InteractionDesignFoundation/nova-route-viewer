@@ -2,10 +2,10 @@
 
 namespace Sbine\RouteViewer;
 
-use Laravel\Nova\Nova;
-use Laravel\Nova\Events\ServingNova;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Nova\Events\ServingNova;
+use Laravel\Nova\Nova;
 use Sbine\RouteViewer\Http\Middleware\Authorize;
 
 class ToolServiceProvider extends ServiceProvider
@@ -17,7 +17,7 @@ class ToolServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->loadViewsFrom(__DIR__.'/../resources/views', 'route-viewer');
+        $this->registerTranslations();
 
         $this->app->booted(function () {
             $this->routes();
@@ -39,9 +39,12 @@ class ToolServiceProvider extends ServiceProvider
             return;
         }
 
+        Nova::router(['nova', Authorize::class], 'route-viewer')
+            ->group(__DIR__.'/../routes/inertia.php');
+
         Route::middleware(['nova', Authorize::class])
-                ->prefix('nova-vendor/route-viewer')
-                ->group(__DIR__.'/../routes/api.php');
+            ->prefix('nova-vendor/route-viewer')
+            ->group(__DIR__ . '/../routes/api.php');
     }
 
     /**
@@ -52,5 +55,23 @@ class ToolServiceProvider extends ServiceProvider
     public function register()
     {
         //
+    }
+
+    protected function registerTranslations()
+    {
+        $currentLocale = app()->getLocale();
+        $localTranslationDir = __DIR__ . '/../resources/lang';
+        $novaTranslationDir = resource_path('lang/vendor/route-viewer');
+
+        Nova::translations($localTranslationDir . '/' . $currentLocale . '.json');
+        Nova::translations($novaTranslationDir . '/' . $currentLocale . '.json');
+
+        $this->loadTranslationsFrom($localTranslationDir, 'route-viewer');
+        $this->loadJSONTranslationsFrom($localTranslationDir);
+        $this->loadJSONTranslationsFrom($novaTranslationDir);
+
+        $this->publishes([
+            $localTranslationDir => $novaTranslationDir,
+        ], 'translations');
     }
 }

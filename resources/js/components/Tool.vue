@@ -1,43 +1,52 @@
 <template>
     <div>
-        <heading class="mb-6">Route Viewer</heading>
+        <Head :title="__('Route Viewer')" />
 
-        <div class="flex justify-between">
-            <div class="relative h-9 flex items-center mb-6">
+        <Heading class="mb-6">Route Viewer</Heading>
+
+        <div class="flex items-center mb-6">
+            <div class="relative h-9 flex items-center">
                 <icon type="search" class="absolute ml-3 text-70" />
 
-                <input v-model="search"
-                       class="appearance-none form-control form-input w-search pl-search"
-                       placeholder="Search"
-                       type="search"
+                <input
+                    v-model="search"
+                    class="pl-10 pr-2 form-control focus:outline-none form-input-bordered dark:bg-gray-900 form-select"
+                    :placeholder="__('Search')"
+                    type="search"
                 >
             </div>
 
-            <div class="flex items-center mb-6 ml-6">
-                <checkbox :checked="showNova"
-                          @input="toggleNova"
+            <div class="flex items-center ml-4">
+                <checkbox
+                    :checked="showNova"
+                    @input="toggleNova"
                 />
-                <label class="cursor-pointer pl-2"
-                       @click="toggleNova"
+                <label
+                    class="cursor-pointer ml-2"
+                    @click="toggleNova"
                 >
-                    Show Nova routes
+                    {{ __('Show Nova routes') }}
                 </label>
             </div>
 
-            <span class="ml-auto mb-6">
-                <button @click="getRoutes()"
-                        class="btn btn-default btn-primary"
+            <span class="ml-auto">
+                <button
+                    class="bg-primary-500 shadow px-6 py-2 rounded text-white dark:text-gray-900 cursor-pointer text-sm font-bold hover:bg-primary-400"
+                    @click="getRoutes()"
                 >
-                    Refresh
+                    {{ __('Refresh') }}
                 </button>
             </span>
         </div>
 
-        <card>
-            <route-table :routes="filteredRoutes"
-                         :sort="sortBy"
-            ></route-table>
-        </card>
+        <LoadingView :loading="isLoading">
+            <Card>
+                <RouteTable
+                    :routes="filteredRoutes"
+                    :sort="sortBy"
+                />
+            </Card>
+        </LoadingView>
     </div>
 </template>
 
@@ -45,9 +54,16 @@
 import RouteTable from './RouteTable';
 
 export default {
+    metaInfo() {
+      return {
+        title: 'Route Viewer'
+      }
+    },
     components: { RouteTable },
+
     data() {
         return {
+            isLoading: true,
             routes: [],
             search: '',
             sort: {
@@ -57,15 +73,22 @@ export default {
             showNova: false,
         }
     },
+
     mounted() {
         this.getRoutes();
     },
+
     methods: {
         getRoutes() {
+            this.isLoading = true
             Nova.request().get('/nova-vendor/route-viewer/routes').then(response => {
-                this.routes = response.data;
+                if (response.data) {
+                    this.routes = response.data;
+                }
             });
+            this.isLoading = false
         },
+
         sortBy(field) {
             this.sort.field = field;
             this.sort.order *= -1;
@@ -82,10 +105,12 @@ export default {
                 return comparison * this.sort.order;
             });
         },
+
         toggleNova() {
             this.showNova = ! this.showNova;
         }
     },
+
     computed: {
         filteredRoutes() {
             if (! this.search.length) {
@@ -117,6 +142,7 @@ export default {
                 return matchesSearch;
             });
         },
+
         visibleRoutes() {
             if (this.showNova) {
                 return this.routes;
@@ -128,6 +154,7 @@ export default {
                     && ! route.middleware.includes('nova');
             });
         },
+
         searchRegex() {
             try {
                 return new RegExp('(' + this.search + ')','i');
@@ -138,6 +165,3 @@ export default {
     }
 }
 </script>
-
-<style>
-</style>
