@@ -78,7 +78,6 @@
 
 <script>
 import RouteTable from './RouteTable';
-import { ref } from 'vue';
 
 export default {
     metaInfo() {
@@ -109,13 +108,18 @@ export default {
 
     methods: {
         getRoutes() {
-            this.isLoading = true
-            Nova.request().get('/nova-vendor/route-viewer/routes').then(response => {
-                if (response.data) {
-                    this.routes = response.data;
-                }
-            });
-            this.isLoading = false
+            this.isLoading = true;
+
+            Nova.request().get('/nova-vendor/route-viewer/routes')
+                .then(response => {
+                    if (response.data) {
+                        this.routes = response.data;
+                    }
+                })
+                .catch(error => Nova.error(error.message))
+                .finally(() => {
+                    this.isLoading = false;
+                });
         },
 
         sortBy(field) {
@@ -145,6 +149,26 @@ export default {
 
         toggleHorizon() {
             this.showHorizon = ! this.showHorizon;
+        },
+
+        belongsToNova(route) {
+            return route.middleware.includes('nova')
+                || route.middleware.includes('nova:api')
+                || (typeof route.action === 'string' && route.action.startsWith('Laravel\\Nova'));
+        },
+
+        belongsToPassport(route) {
+            if (typeof route.action === 'string') {
+              return route.action.startsWith('Laravel\\Passport');
+            }
+            return false;
+        },
+
+        belongsToHorizon(route) {
+            if (typeof route.action === 'string') {
+              return route.action.startsWith('Laravel\\Horizon');
+            }
+            return false;
         },
     },
 
@@ -181,7 +205,7 @@ export default {
         },
 
         visibleRoutes() {
-            let filteredRoutes = ref(this.routes);
+            let filteredRoutes = this.routes;
 
             if (! this.showNova) {
                 filteredRoutes = filteredRoutes.filter(route => ! this.belongsToNova(route));
@@ -196,18 +220,6 @@ export default {
             }
 
             return filteredRoutes;
-        },
-
-        belongsToNova(route) {
-            return route.action.startsWith('Laravel\\Nova');
-        },
-
-        belongsToPassport(route) {
-            return route.action.startsWith('Laravel\\Passport');
-        },
-
-        belongsToHorizon(route) {
-            return route.action.startsWith('Laravel\\Horizon');
         },
 
         searchRegex() {
