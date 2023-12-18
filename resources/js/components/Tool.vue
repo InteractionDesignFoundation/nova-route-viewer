@@ -180,32 +180,32 @@ export default {
         },
 
         visibleRoutes() {
-            let filteredRoutes = [...this.routes];
+            let filteredRoutes = this.routes.filter(route => true);
 
             if (! this.showNova) {
-                filteredRoutes = filteredRoutes.filter(route => ! this.belongToNova(route));
+                filteredRoutes = filteredRoutes.filter(route => ! this.belongsToNova(route));
             }
 
             if (! this.showPassport) {
-                filteredRoutes = filteredRoutes.filter(route => ! this.belongToPassport(route));
+                filteredRoutes = filteredRoutes.filter(route => ! this.belongsToPassport(route));
             }
 
             if (! this.showHorizon) {
-                filteredRoutes = filteredRoutes.filter(route => ! this.belongToHorizon(route));
+                filteredRoutes = filteredRoutes.filter(route => ! this.belongsToHorizon(route));
             }
 
             return filteredRoutes;
         },
 
-        belongToNova(route) {
+        belongsToNova(route) {
             return route.action.startsWith('Laravel\\Nova');
         },
 
-        belongToPassport(route) {
+        belongsToPassport(route) {
             return route.action.startsWith('Laravel\\Passport');
         },
 
-        belongToHorizon(route) {
+        belongsToHorizon(route) {
             return route.action.startsWith('Laravel\\Horizon');
         },
 
