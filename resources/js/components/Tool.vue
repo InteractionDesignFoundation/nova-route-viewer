@@ -181,7 +181,7 @@ export default {
         },
 
         visibleRoutes() {
-            let filteredRoutes = [...ref(this.routes)];
+            let filteredRoutes = ref(this.routes);
 
             if (! this.showNova) {
                 filteredRoutes = filteredRoutes.filter(route => ! this.belongsToNova(route));
