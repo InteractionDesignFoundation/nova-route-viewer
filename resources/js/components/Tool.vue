@@ -78,6 +78,7 @@
 
 <script>
 import RouteTable from './RouteTable';
+import { ref } from 'vue';
 
 export default {
     metaInfo() {
@@ -180,7 +181,7 @@ export default {
         },
 
         visibleRoutes() {
-            let filteredRoutes = this.routes.filter(route => true);
+            let filteredRoutes = [...ref(this.routes)];
 
             if (! this.showNova) {
                 filteredRoutes = filteredRoutes.filter(route => ! this.belongsToNova(route));
