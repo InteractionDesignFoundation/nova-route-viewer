@@ -15,10 +15,10 @@
     ],
     "homepage": "https://github.com/sbine/nova-route-viewer",
     "require": {
-      "php": "^8.1",
-      "laravel/nova": "^4.0 || ^5.0",
-      "laravel/framework": "^10.0 || ^11.0"
-    },
+        "php": "^8.1",
+        "laravel/framework": "^10.0 || ^11.0",
+        "laravel/nova": "^4.0 || ^5.0"
+    }
     "minimum-stability": "dev",
     "prefer-stable": true,
     "autoload": {
