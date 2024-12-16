@@ -2,6 +2,7 @@
 
 namespace Sbine\RouteViewer\Http\Controllers;
 
+use App\Modules\Infrastructure\RouteHit\Services\RouteHitCounter;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 
@@ -9,12 +10,10 @@ class Api
 {
     /**
      * Return all the registered routes.
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function getRoutes()
+    public function getRoutes(RouteHitCounter $routeHitCounter): \Illuminate\Http\JsonResponse
     {
-        $routes = collect(Route::getRoutes())->map(function ($route, $index) {
+        $routes = collect(Route::getRoutes())->map(function ($route) use ($routeHitCounter) {
             $routeName = $route->action['as'] ?? '';
             if (Str::endsWith($routeName, '.')) {
                 $routeName = '';
@@ -29,6 +28,7 @@ class Api
                 'uri' => $route->uri,
                 'as' => $routeName,
                 'methods' => $route->methods,
+                'hits' => $routeHitCounter->getHits($route),
                 'action' => $route->action['uses'] ?? '',
                 'middleware' => $routeMiddleware,
             ];
