@@ -61,6 +61,13 @@
                         {{ value }}
                     </span>
                 </td>
+                <td
+                    v-for="(column) in (route.meta.columns || [])"
+                    :key="column.key"
+                    class="px-6 py-2 border-t border-gray-100 dark:border-gray-700 whitespace-nowrap dark:bg-gray-800 group-hover:bg-gray-50 dark:group-hover:bg-gray-900 text-right"
+                >
+                    {{ column.value }}
+                </td>
             </tr>
             </tbody>
         </table>
@@ -130,7 +137,8 @@ export default {
                 {
                     label: 'Middleware',
                     attribute: 'middleware',
-                }
+                },
+                ...this.dynamicColumns(this.routes[0] || {}),
             ],
         };
     },
@@ -138,6 +146,19 @@ export default {
     methods: {
         style(value) {
             return StyleGenerator.generate(value);
+        },
+
+        /**
+         * @param {{meta: {columns: Array<{label: string, key: string}>}}} route
+         * @returns {Array<{label: string, attribute: string}>}
+         */
+        dynamicColumns(route) {
+            return (route.meta?.columns || []).map((column) => {
+                return {
+                    label: column.label,
+                    attribute: column.key,
+                };
+            });
         }
     }
 }

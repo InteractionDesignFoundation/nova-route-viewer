@@ -4,17 +4,14 @@ namespace Sbine\RouteViewer\Http\Controllers;
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
+use Sbine\RouteViewer\Http\Services\RouteMetaInfoProvider;
 
-class Api
+final class ApiRouteListController
 {
-    /**
-     * Return all the registered routes.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function getRoutes()
+    /** Return all the registered routes. */
+    public function __invoke(RouteMetaInfoProvider $metaInfoProvider): \Illuminate\Http\JsonResponse
     {
-        $routes = collect(Route::getRoutes())->map(function ($route, $index) {
+        $routes = collect(Route::getRoutes())->map(static function (\Illuminate\Routing\Route $route) use ($metaInfoProvider): array {
             $routeName = $route->action['as'] ?? '';
             if (Str::endsWith($routeName, '.')) {
                 $routeName = '';
@@ -31,6 +28,7 @@ class Api
                 'methods' => $route->methods,
                 'action' => $route->action['uses'] ?? '',
                 'middleware' => $routeMiddleware,
+                'meta' => $metaInfoProvider->getMeta($route),
             ];
         });
 

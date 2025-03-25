@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Sbine\RouteViewer\Http\Controllers\ApiRouteListController;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,4 +14,4 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/routes', 'Sbine\RouteViewer\Http\Controllers\Api@getRoutes');
+Route::get('/routes', ApiRouteListController::class);
