@@ -7,6 +7,8 @@ use Illuminate\Support\ServiceProvider;
 use Laravel\Nova\Events\ServingNova;
 use Laravel\Nova\Nova;
 use Sbine\RouteViewer\Http\Middleware\Authorize;
+use Sbine\RouteViewer\Http\Services\EmptyRouteMetaInfoProvider;
+use Sbine\RouteViewer\Http\Services\RouteMetaInfoProvider;
 
 class ToolServiceProvider extends ServiceProvider
 {
@@ -54,7 +56,7 @@ class ToolServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->app->bind(RouteMetaInfoProvider::class, EmptyRouteMetaInfoProvider::class);
     }
 
     protected function registerTranslations()
